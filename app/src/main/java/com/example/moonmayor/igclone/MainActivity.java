@@ -100,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
             // read the Bitmap from the file we saved the picture to
             // and load it in the ImageView.
             setPictureFromFile();
+            galleryAddPic();
         } else if (resultCode == RESULT_OK && requestCode == REQUEST_PICK_PICTURE) {
             setPictureFromGallery(data);
         }
@@ -117,6 +118,14 @@ public class MainActivity extends AppCompatActivity {
         mCurrentPhotoFilepath = file.getAbsolutePath();
 
         return file;
+    }
+
+    private void galleryAddPic() {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(mCurrentPhotoFilepath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        this.sendBroadcast(mediaScanIntent);
     }
 
     private void setPictureFromFile() {
