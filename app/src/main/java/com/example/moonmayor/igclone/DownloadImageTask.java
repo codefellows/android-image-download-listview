@@ -10,12 +10,16 @@ import android.widget.ImageView;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by moonmayor on 10/5/17.
  */
 
 public class DownloadImageTask extends AsyncTask<Void, Void, Bitmap> {
+    private static Map<String, Bitmap> cache = new HashMap<>();
+
     private Context mContext;
     private String mUrl;
     private ImageView mView;
@@ -27,21 +31,25 @@ public class DownloadImageTask extends AsyncTask<Void, Void, Bitmap> {
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        Drawable placeholder = mContext.getResources().getDrawable(R.drawable.placeholder);
-        mView.setImageDrawable(placeholder);
-    }
-
-    @Override
     protected Bitmap doInBackground(Void... voids) {
         try {
+            if (cache.containsKey(mUrl)) {
+                return cache.get(mUrl);
+            }
             InputStream stream = new URL(mUrl).openConnection().getInputStream();
             Bitmap bitmap = BitmapFactory.decodeStream(stream);
+
+            Thread.sleep(1500);
+            cache.put(mUrl, bitmap);
+
             return bitmap;
         } catch (IOException e) {
             return null;
+        } catch (InterruptedException e) {
+
         }
+
+        return null;
     }
 
     @Override

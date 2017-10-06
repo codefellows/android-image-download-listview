@@ -31,13 +31,15 @@ public class ImageAdapter extends ArrayAdapter<String> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = LayoutInflater.from(mContext).inflate(mLayoutId, parent, false);
+        if (convertView == null) {
+            convertView = LayoutInflater.from(mContext).inflate(mLayoutId, parent, false);
+        }
 
-        ImageView image = view.findViewById(R.id.downloadedImage);
+        ImageView image = convertView.findViewById(R.id.downloadedImage);
         String url = mUrls.get(position);
 
         (new DownloadImageTask(mContext, url, image)).execute();
 
-        return view;
+        return convertView;
     }
 }
