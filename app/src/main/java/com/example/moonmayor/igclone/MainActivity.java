@@ -13,8 +13,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.File;
@@ -25,6 +27,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private final int REQUEST_IMAGE_CAPTURE = 1;
@@ -35,6 +39,10 @@ public class MainActivity extends AppCompatActivity {
     private Button mPickPicture;
     private Button mDownloadPicture;
     private ImageView mImageResult;
+
+    private ListView mImageList;
+    private ImageAdapter mAdapter;
+    private List<String> mImageUrls;
 
     // A spot to remember what file we told the camera to
     // save the last picture to.
@@ -50,6 +58,11 @@ public class MainActivity extends AppCompatActivity {
         mPickPicture = (Button) findViewById(R.id.pickPicture);
         mDownloadPicture = (Button) findViewById(R.id.downloadPicture);
         mImageResult = (ImageView) findViewById(R.id.imageResult);
+
+        mImageUrls = MockDatabase.allImages;
+        mImageList = (ListView) findViewById(R.id.imageList);
+        mAdapter = new ImageAdapter(this, R.layout.image_item, mImageUrls);
+        mImageList.setAdapter(mAdapter);
 
         attachClickListeners();
     }
@@ -106,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void downloadPicture() {
-        String url = "https://images.unsplash.com/uploads/1413142095961484763cf/d141726c?dpr=1&auto=compress,format&fit=crop&w=1500&h=&q=80&cs=tinysrgb&crop=";
+        String url = MockDatabase.image1;
         (new DownloadImageTask(this, url, mImageResult)).execute();
     }
 
