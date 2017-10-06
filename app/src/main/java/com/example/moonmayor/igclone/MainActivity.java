@@ -11,6 +11,8 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private final int REQUEST_IMAGE_CAPTURE = 1;
 
     private TextView mInfo;
+    private Button mTakePicture;
     private ImageView mImageResult;
 
     // A spot to remember what file we told the camera to
@@ -35,8 +38,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mInfo = (TextView) findViewById(R.id.info);
+        mTakePicture = (Button) findViewById(R.id.takePicture);
         mImageResult = (ImageView) findViewById(R.id.imageResult);
 
+        attachClickListeners();
+    }
+
+    private void attachClickListeners() {
+        mTakePicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                takePicture();
+            }
+        });
+    }
+
+    private void takePicture() {
         try {
             File imageFile = getPictureFile();
             Uri photoUri = FileProvider.getUriForFile(this,
