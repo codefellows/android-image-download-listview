@@ -17,15 +17,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
     private final int REQUEST_IMAGE_CAPTURE = 1;
+    private final int REQUEST_PICK_PICTURE = 2;
 
     private TextView mInfo;
     private Button mTakePicture;
+    private Button mPickPicture;
     private ImageView mImageResult;
 
     // A spot to remember what file we told the camera to
@@ -39,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
         mInfo = (TextView) findViewById(R.id.info);
         mTakePicture = (Button) findViewById(R.id.takePicture);
+        mPickPicture = (Button) findViewById(R.id.pickPicture);
         mImageResult = (ImageView) findViewById(R.id.imageResult);
 
         attachClickListeners();
@@ -49,6 +54,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 takePicture();
+            }
+        });
+
+        mPickPicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pickPicture();
             }
         });
     }
@@ -72,6 +84,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void pickPicture() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+
+        Intent chooser = Intent.createChooser(intent, "Select Picture");
+        startActivityForResult(chooser, REQUEST_PICK_PICTURE);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -79,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
             // read the Bitmap from the file we saved the picture to
             // and load it in the ImageView.
             setPictureFromFile();
+        } else if (resultCode == RESULT_OK && requestCode == REQUEST_PICK_PICTURE) {
+            setPictureFromGallery(data);
         }
     }
 
@@ -99,5 +122,15 @@ public class MainActivity extends AppCompatActivity {
     private void setPictureFromFile() {
         Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoFilepath);
         mImageResult.setImageBitmap(bitmap);
+    }
+
+    private void setPictureFromGallery(Intent data) {
+        try {
+            InputStream stream = this.getContentResolver().openInputStream(data.getData());
+            Bitmap galleryPicture = BitmapFactory.decodeStream(stream);
+            mImageResult.setImageBitmap(galleryPicture);
+        } catch (FileNotFoundException e) {
+            mInfo.setText("Error: " + e.getMessage());
+        }
     }
 }
