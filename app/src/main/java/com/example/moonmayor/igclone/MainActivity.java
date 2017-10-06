@@ -3,6 +3,7 @@ package com.example.moonmayor.igclone;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.ContactsContract;
@@ -20,6 +21,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -30,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mInfo;
     private Button mTakePicture;
     private Button mPickPicture;
+    private Button mDownloadPicture;
     private ImageView mImageResult;
 
     // A spot to remember what file we told the camera to
@@ -44,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         mInfo = (TextView) findViewById(R.id.info);
         mTakePicture = (Button) findViewById(R.id.takePicture);
         mPickPicture = (Button) findViewById(R.id.pickPicture);
+        mDownloadPicture = (Button) findViewById(R.id.downloadPicture);
         mImageResult = (ImageView) findViewById(R.id.imageResult);
 
         attachClickListeners();
@@ -61,6 +66,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 pickPicture();
+            }
+        });
+
+        mDownloadPicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                downloadPicture();
             }
         });
     }
@@ -91,6 +103,11 @@ public class MainActivity extends AppCompatActivity {
 
         Intent chooser = Intent.createChooser(intent, "Select Picture");
         startActivityForResult(chooser, REQUEST_PICK_PICTURE);
+    }
+
+    private void downloadPicture() {
+        String url = "https://images.unsplash.com/uploads/1413142095961484763cf/d141726c?dpr=1&auto=compress,format&fit=crop&w=1500&h=&q=80&cs=tinysrgb&crop=";
+        (new DownloadImageTask(this, url, mImageResult)).execute();
     }
 
     @Override

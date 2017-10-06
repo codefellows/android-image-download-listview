@@ -18,6 +18,11 @@
         android:text="Pick Picture"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/downloadPicture"
+        android:text="Download Picture"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
     <ImageView
         android:id="@+id/imageResult"
         android:layout_width="match_parent"
